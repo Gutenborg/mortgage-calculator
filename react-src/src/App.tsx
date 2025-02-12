@@ -1,37 +1,64 @@
-import './App.css'
 // @deno-types="@types/react"
-import { useState } from 'react'
-// @ts-expect-error Unable to infer type at the moment
-import reactLogo from './assets/react.svg'
+import { FormEvent, useState } from "react";
+import { Button, Input } from "./lib/index.ts";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [loanDetails, setLoanDetails] = useState({
+    amount: 100000,
+    interest: 5,
+    term: 30,
+  });
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+
+    
+    const amount = Number(formData.get("loan-amount"));
+    const interest = Number(formData.get("interest-rate"));
+    const term = Number(formData.get("loan-term"));
+
+    if (Number.isNaN(amount) || Number.isNaN(interest) || Number.isNaN(term)) {
+      console.error("One of the values did not convert to a number: ", { amount, interest, term });
+      return;
+    }
+    
+    setLoanDetails({
+      amount, interest, term
+    });
+  }
+
+  const payment = ((loanDetails.interest / 100 / 12) * loanDetails.amount) / (1 - ((1 + (loanDetails.interest / 100 / 12)) ** (-loanDetails.term * 12)));
+  const formattedPayment = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD"}).format(payment);
 
   return (
-    <>
-      <img src="/vite-deno.svg" alt="Vite with Deno" />
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <form className="mortgage-form" onSubmit={handleSubmit}>
+      <h1>Mortgage Calculator in React</h1>
+
+      <Input
+        label="Principle Loan Amount"
+        defaultValue={loanDetails.amount.toString()}
+        name="loan-amount"
+        prefix="$"
+        type="number"
+      />
+
+      <Input label="Interest Rate" defaultValue={loanDetails.interest.toString()} name="interest-rate" suffix="%" />
+      
+      <Input
+        label="Length of Loan"
+        defaultValue={loanDetails.term.toString()}
+        name="loan-term"
+        suffix="Years"
+        type="number"
+      />
+
+      <Button type="submit">Calculate</Button>
+
+      <p>Your monthly mortgage payment will be {formattedPayment}</p>
+    </form>
+  );
 }
 
-export default App
+export default App;
