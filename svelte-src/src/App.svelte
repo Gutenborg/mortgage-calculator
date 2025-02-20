@@ -1,46 +1,96 @@
 <script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
-  import Counter from './lib/Counter.svelte'
+  import Input from "./lib/Input.svelte";
+
+  let amount = $state(100000);
+  let interest = $state(5);
+  let term = $state(30);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+
+    const formAmount = Number(formData.get("loan-amount"));
+    const formInterest = Number(formData.get("interest-rate"));
+    const formTerm = Number(formData.get("loan-term"));
+
+    if (
+      Number.isNaN(formAmount) ||
+      Number.isNaN(formInterest) ||
+      Number.isNaN(formTerm)
+    ) {
+      console.error("One of the values did not convert to a number: ", {
+        amount,
+        interest,
+        term,
+      });
+
+      return;
+    }
+
+    amount = formAmount;
+    interest = formInterest;
+    term = formTerm;
+  };
+
+  const payment = $derived(
+    ((interest / 100 / 12) * amount) /
+      (1 - (1 + interest / 100 / 12) ** (-term * 12))
+  );
+
+  const formattedPayment = $derived(
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(payment)
+  );
 </script>
 
 <main>
-  <img src="/vite-deno.svg" alt="Vite with Deno" />
-  <div>
-    <a href="https://vite.dev" target="_blank" rel="noreferrer"> 
-      <img src="/vite.svg" class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer"> 
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
-  </div>
-  <h1>Vite + Svelte</h1>
+  <form class="mortgage-form" onsubmit={handleSubmit}>
+    <h1>Mortgage Calculator in React</h1>
 
-  <div class="card">
-    <Counter />
-  </div>
+    <Input
+      label="Principle Loan Amount"
+      defaultValue={amount.toString()}
+      name="loan-amount"
+      prefix="$"
+      type="number"
+    />
 
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
+    <Input
+      label="Interest Rate"
+      defaultValue={interest.toString()}
+      name="interest-rate"
+      suffix="%"
+    />
 
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
+    <Input
+      label="Length of Loan"
+      defaultValue={term.toString()}
+      name="loan-term"
+      suffix="Years"
+      type="number"
+    />
+
+    <button class="button" type="submit">Calculate</button>
+
+    <p>Your monthly mortgage payment will be {formattedPayment}</p>
+  </form>
 </main>
 
 <style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
+  .button {
+    background-color: lightblue;
+    border: unset;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0.4rem 0.6rem;
+    text-transform: uppercase;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: lightskyblue;
+    }
   }
 </style>
