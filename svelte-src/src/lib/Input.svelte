@@ -2,7 +2,9 @@
   import type { HTMLInputAttributes } from "svelte/elements";
 
   export interface InputProps extends HTMLInputAttributes {
-    defaultValue: string;
+    class: string;
+    defaultValue?: string;
+    hidden: boolean;
     label: string;
     prefix?: string;
     suffix?: string;

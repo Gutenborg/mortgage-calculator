@@ -1,32 +1,95 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
+  import { computed, ref } from 'vue';
+  import Input from './components/Input.vue';
+
+  let amount = ref(100000);
+  let interest = ref(5);
+  let term = ref(30);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    
+    const formData = new FormData(event.currentTarget);
+    
+    const formAmount = Number(formData.get("loan-amount"));
+    const formInterest = Number(formData.get("interest-rate"));
+    const formTerm = Number(formData.get("loan-term"));
+    
+    if (
+      Number.isNaN(formAmount) ||
+      Number.isNaN(formInterest) ||
+      Number.isNaN(formTerm)
+    ) {
+      console.error("One of the values did not convert to a number: ", {
+        amount,
+        interest,
+        term,
+      });
+      
+      return;
+    }
+
+    console.log("Running!");
+
+    amount.value = formAmount;
+    interest.value = formInterest;
+    term.value = formTerm;
+  };
+
+  const payment = computed(() => (
+    (interest.value / 100 / 12) * amount.value) / (1 - (1 + interest.value / 100 / 12) ** (-term.value * 12))
+  );
+
+  const formattedPayment = computed(() => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", }).format(payment.value));
 </script>
 
 <template>
-  <img src="/vite-deno.svg" alt="Vite with Deno" />
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <main>
+    <form class="mortgage-form" @submit="handleSubmit">
+      <h1>Mortgage Calculator in React</h1>
+
+      <Input
+        label="Principle Loan Amount"
+        :defaultValue="amount.toString()"
+        name="loan-amount"
+        prefix="$"
+        type="number"
+      />
+
+      <Input
+        label="Interest Rate"
+        :defaultValue="interest.toString()"
+        name="interest-rate"
+        suffix="%"
+      />
+
+      <Input
+        label="Length of Loan"
+        :defaultValue="term.toString()"
+        name="loan-term"
+        suffix="Years"
+        type="number"
+      />
+
+      <button class="button" type="submit">Calculate</button>
+
+      <p>Your monthly mortgage payment will be {{formattedPayment}}</p>
+    </form>
+  </main>
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+  .button {
+    background-color: lightblue;
+    border: unset;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0.4rem 0.6rem;
+    text-transform: uppercase;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: lightskyblue;
+    }
+  }
 </style>

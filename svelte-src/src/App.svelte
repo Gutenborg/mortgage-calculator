@@ -47,7 +47,7 @@
 </script>
 
 <main>
-  <form class="mortgage-form" onsubmit={handleSubmit}>
+  <form class="mortgage-form" on:submit={handleSubmit}>
     <h1>Mortgage Calculator in React</h1>
 
     <Input
