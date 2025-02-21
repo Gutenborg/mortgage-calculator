@@ -1,0 +1,13 @@
+.mortgage-form {
+    margin: 0 auto;
+    width: 50vw;
+  }
+  
+  .button {
+    background-color: lightblue;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0.4rem 0.6rem;
+    text-transform: uppercase;
+  }
+  

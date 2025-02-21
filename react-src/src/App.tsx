@@ -13,7 +13,6 @@ function App() {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-
     
     const amount = Number(formData.get("loan-amount"));
     const interest = Number(formData.get("interest-rate"));

@@ -1,13 +1,53 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + TS</title>
+    <link rel="stylesheet" href="./src/index.css" />
   </head>
   <body>
-    <div id="app"></div>
+    <main>
+      <form class="mortgage-form" id="mortgage-form">
+        <h1>Mortgage Calculator in React</h1>
+
+        <input-field
+          label="Principle Loan Amount"
+          default-value="100000"
+          name="loan-amount"
+          prefix="$"
+          type="number"
+        ></input-field>
+
+        <input-field
+          label="Interest Rate"
+          default-value="5"
+          name="interest-rate"
+          suffix="%"
+        ></input-field>
+
+        <input-field
+          label="Length of Loan"
+          default-value="30"
+          name="loan-term"
+          suffix="Years"
+          type="number"
+        ></input-field>
+
+        <button class="button" type="submit">Calculate</button>
+
+        <p>
+          Your monthly mortgage payment will be
+          <output
+            for="loan-amount interest-rate loan-term"
+            form="mortgage-form"
+            id="mortgage-payment"
+          ></output>
+        </p>
+      </form>
+    </main>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
