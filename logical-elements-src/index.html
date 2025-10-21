@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vite + TS</title>
+  <link rel="stylesheet" href="/index.css" />
+</head>
+
+<body>
+  <main>
+    <le-context name="mortgageCalculatorForm">
+      <script>
+        function mortgageCalculatorForm(state) {
+          const handleSubmit = (event) => {
+            event.preventDefault();
+            const formElement = event.currentTarget;
+            const formData = new FormData(formElement);
+
+            const amount = Number(formData.get("loan-amount"));
+            const interest = Number(formData.get("interest-rate"));
+            const term = Number(formData.get("loan-term"));
+
+            if (Number.isNaN(amount) || Number.isNaN(interest) || Number.isNaN(term)) {
+              console.error("One of the values did not convert to a number: ", {
+                amount,
+                interest,
+                term,
+              });
+              return;
+            }
+
+            state.store.amount = amount;
+            state.store.interest = interest;
+            state.store.term = term;
+          }
+
+          const totalPayment = (store) => {
+            const payment = ((store.interest / 100 / 12) * store.amount) / (1 - (1 + store.interest / 100 / 12) ** (-store.term * 12));
+
+            const formattedPayment = new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+            }).format(payment);
+
+            return formattedPayment;
+          }
+
+          return {
+            amount: 100000,
+            handleSubmit,
+            interest: 5,
+            payment: state.derive(totalPayment),
+            term: 30,
+          }
+        }
+      </script>
+
+      <form class="mortgage-form" id="mortgage-form" on:submit="{mortgageCalculatorForm.handleSubmit}">
+        <h1>Mortgage Calculator Using Logical Elements</h1>
+
+        <le-field default-value="100000" name="loan-amount" prefix="$">
+          <label>Principle Loan Amount</label>
+          <input type="number" />
+        </le-field>
+
+        <le-field default-value="5" name="interest-rate" suffix="%">
+          <label>Interest Rate</label>
+          <input type="text" />
+        </le-field>
+
+        <le-field default-value="30" name="loan-term" suffix="Years">
+          <label>Length of Loan</label>
+          <input type="number" />
+        </le-field>
+
+        <button class="button" type="submit">Calculate</button>
+
+        <p>
+          Your monthly mortgage payment will be
+          <output for="loan-amount interest-rate loan-term" form="mortgage-form" id="mortgage-payment"
+            set:text="{mortgageCalculatorForm.payment}"></output>
+        </p>
+      </form>
+    </le-context>
+  </main>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>

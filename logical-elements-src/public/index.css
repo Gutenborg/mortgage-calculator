@@ -1,0 +1,57 @@
+.mortgage-form {
+  margin: 0 auto;
+  width: 50vw;
+}
+
+.button {
+  background-color: lightblue;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0.4rem 0.6rem;
+  text-transform: uppercase;
+}
+
+.input-wrapper {
+  display: grid;
+  grid-template-areas: "label label label" "prefix input suffix";
+  grid-template-columns: min-content 1fr min-content;
+  padding: 0.25em;
+  width: 50%;
+
+  label {
+    grid-area: label;
+    margin-bottom: 0.2em;
+  }
+
+  span.input-prefix, span.input-suffix {
+    background-color: lightgray;
+    border-radius: 4px;
+    color: black;
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+
+  span.input-prefix {
+    grid-area: prefix;
+    margin-right: 0.5em;
+  }
+
+  span.input-suffix {
+    grid-area: suffix;
+    margin-left: 0.5em;
+  }
+
+  input {
+    border-radius: 4px;
+    grid-area: input;
+    outline: none;
+    padding: 0.25em;
+    
+    &:focus-within {
+      outline: lightblue;
+    }
+  }
+}
